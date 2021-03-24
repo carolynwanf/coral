@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+.coral-container{
+  border:1px solid #282c34
+}
+
+#responsive-canvas {
+  width: 90%;
+  height: 50vmin
+}
