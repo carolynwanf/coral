@@ -31,27 +31,57 @@ const Canvas = props => {
     //     ctx.fill()
     // }
 
-    const draw = (startX, startY, len, angle, ctx) => {
+    const draw = (startX, startY, len, angle, branchThickness, ctx) => {
 
         console.log('draw called')
         // console.log('inputs',startX, startY, len, angle, ctx, ctx.beginPath())
+
+        const radius = branchThickness/2
+
+        //draw circles at end
+        ctx.beginPath()
+        ctx.save();
+        ctx.fillStyle = '#ff5c85'
+        
+        ctx.translate(startX, startY);
+        ctx.rotate(angle * Math.PI/180);
+        ctx.moveTo(0-radius,0)
+        ctx.arc(0,0,radius,0,Math.PI,false)
+        ctx.fill()
+
+        ctx.restore()
+
+        ctx.beginPath()
+        
+
+        
         ctx.beginPath()
         ctx.save();
         
         ctx.translate(startX, startY);
         ctx.rotate(angle * Math.PI/180);
+        
         ctx.moveTo(0, 0);
+        
+        
         ctx.lineTo(0, -len);
         ctx.strokeStyle = "#ff5c85"
+        ctx.lineWidth = branchThickness
         ctx.stroke();
         
-        if(len < 10) {
+        if(branchThickness < 10) {
           ctx.restore();
           return;
         }
+
+        // if (branchThickness === 20) {
+        //     branchThickness = 15
+        // } else {
+        //     branchThickness = 0.8*branchThickness
+        // }
         
-        draw(0, -len, len*0.8, -30, ctx);
-        draw(0, -len, len*0.8, 30, ctx);
+        draw(0, -len, len*0.8, -30, branchThickness*0.8, ctx);
+        draw(0, -len, len*0.8, 30, branchThickness*0.8, ctx);
         
         ctx.restore();
     }
@@ -74,9 +104,9 @@ const Canvas = props => {
         }
 
 
-        draw(x,y, 35, 15, context)
-        draw(x,y, 35, 0, context)
-        draw(x,y, 35, -15, context)
+        // draw(x,y, 100, 25, 20, context)
+        // draw(x,y, 100, 0, 20, context)
+        draw(x,y, 100, -25, 20, context)
         // draw(context)
     },[draw])
 
