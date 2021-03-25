@@ -31,7 +31,7 @@ const Canvas = props => {
     //     ctx.fill()
     // }
 
-    const draw = (startX, startY, len, angle, branchThickness, ctx) => {
+    const draw = (startX, startY, len, angle, branchThickness, likelihood, ctx) => {
 
         console.log('draw called')
         // console.log('inputs',startX, startY, len, angle, ctx, ctx.beginPath())
@@ -39,17 +39,7 @@ const Canvas = props => {
         const radius = branchThickness/2
 
         //draw circles at end
-        ctx.beginPath()
-        ctx.save();
-        ctx.fillStyle = '#ff5c85'
-        
-        ctx.translate(startX, startY);
-        ctx.rotate(angle * Math.PI/180);
-        ctx.moveTo(0-radius,0)
-        ctx.arc(0,0,radius,0,Math.PI,false)
-        ctx.fill()
-
-        ctx.restore()
+    
 
         ctx.beginPath()
         
@@ -70,7 +60,19 @@ const Canvas = props => {
         ctx.stroke();
         
         if(branchThickness < 10) {
+        // makes ends rounded
           ctx.restore();
+          ctx.beginPath()
+          ctx.save();
+          ctx.fillStyle = '#ff5c85'
+          
+          ctx.translate(startX, startY);
+          ctx.rotate(angle * Math.PI/180);
+  
+          ctx.arc(0,0-len,radius,0,Math.PI,true)
+          ctx.fill()
+  
+          ctx.restore()
           return;
         }
 
@@ -79,9 +81,28 @@ const Canvas = props => {
         // } else {
         //     branchThickness = 0.8*branchThickness
         // }
+
+        function getRandomInt(max) {
+            return Math.ceil(Math.random() * Math.ceil(max));
+        }
+
+        const render = getRandomInt(likelihood)
+        const side = getRandomInt(3)
+
+        if (render > 5) {
+            if (side === 0) {
+                draw(0, -len, len*0.8, -30, branchThickness*0.8, likelihood*1.5,ctx);
+            } else if (side === 1) {
+                draw(0, -len, len*0.8, 30, branchThickness*0.8, likelihood*1.5, ctx);
+            } else {
+                draw(0, -len, len*0.8, -30, branchThickness*0.8, likelihood*1.5, ctx);
+                draw(0, -len, len*0.8, 30, branchThickness*0.8, likelihood*1.5, ctx);
+            }
+            
+        }
         
-        draw(0, -len, len*0.8, -30, branchThickness*0.8, ctx);
-        draw(0, -len, len*0.8, 30, branchThickness*0.8, ctx);
+        draw(0, -len, len*0.8, 0, branchThickness*0.8, likelihood*1.5, ctx);
+        
         
         ctx.restore();
     }
@@ -104,9 +125,9 @@ const Canvas = props => {
         }
 
 
-        // draw(x,y, 100, 25, 20, context)
-        // draw(x,y, 100, 0, 20, context)
-        draw(x,y, 100, -25, 20, context)
+        draw(x,y, 100, 25, 20, 10, context)
+        draw(x,y, 100, 0, 20, 10,context)
+        draw(x,y, 100, -25, 20, 10, context)
         // draw(context)
     },[draw])
 
