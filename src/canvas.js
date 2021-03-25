@@ -31,49 +31,86 @@ const Canvas = props => {
     //     ctx.fill()
     // }
 
+    function getRandomInt(max) {
+        return Math.ceil(Math.random() * Math.ceil(max));
+    }
+
     const draw = (startX, startY, len, angle, branchThickness, likelihood, ctx) => {
 
         console.log('draw called')
         // console.log('inputs',startX, startY, len, angle, ctx, ctx.beginPath())
 
+        
+
+        // constants in order of use
         const radius = branchThickness/2
+        const render = getRandomInt(likelihood)
+        const side = getRandomInt(3)
+        const end = getRandomInt(3)
 
-        //draw circles at end
+        if (branchThickness === 20) {
+            ctx.beginPath()
+            ctx.save();
+            ctx.fillStyle = '#ff5c85'
+            
+            ctx.translate(startX, startY);
+            ctx.rotate(angle * Math.PI/180);
     
-
-        ctx.beginPath()
+            ctx.arc(0,0,radius,0,Math.PI,false)
+            ctx.fill()
+    
+            ctx.restore()
+        }
+        
         
 
-        
+        // draw branch, draws curved branches at the base and straight ones at the top
         ctx.beginPath()
         ctx.save();
-        
         ctx.translate(startX, startY);
         ctx.rotate(angle * Math.PI/180);
-        
         ctx.moveTo(0, 0);
-        
-        
-        ctx.lineTo(0, -len);
+        if (branchThickness < 15) {
+            ctx.lineTo(0, -len);
+        } else {
+            if(angle > 0) {
+                ctx.bezierCurveTo(10, -len/2, 10, -len/2, 0, -len);
+            } else {
+                ctx.bezierCurveTo(-10, -len/2, -10, -len/2, 0, -len);
+            }
+        }
         ctx.strokeStyle = "#ff5c85"
         ctx.lineWidth = branchThickness
         ctx.stroke();
+
+        ctx.restore()
+
+        ctx.beginPath()
+        ctx.save();
+        ctx.fillStyle = '#ff5c85'
         
-        if(branchThickness < 10) {
-        // makes ends rounded
-          ctx.restore();
-          ctx.beginPath()
-          ctx.save();
-          ctx.fillStyle = '#ff5c85'
-          
-          ctx.translate(startX, startY);
-          ctx.rotate(angle * Math.PI/180);
-  
-          ctx.arc(0,0-len,radius,0,Math.PI,true)
-          ctx.fill()
-  
-          ctx.restore()
-          return;
+        ctx.translate(startX, startY);
+        ctx.rotate(angle * Math.PI/180);
+
+        ctx.arc(0,0-(len*.95),radius,0,Math.PI,true)
+        ctx.fill()
+
+
+
+        
+        if (end > 1) {
+            if(branchThickness < 10) {
+                // makes ends rounded
+                  ctx.restore();
+                  return;
+            }
+
+        }
+
+        if(branchThickness < 1) {
+            // makes ends rounded
+              ctx.restore();
+              return;
         }
 
         // if (branchThickness === 20) {
@@ -82,26 +119,25 @@ const Canvas = props => {
         //     branchThickness = 0.8*branchThickness
         // }
 
-        function getRandomInt(max) {
-            return Math.ceil(Math.random() * Math.ceil(max));
-        }
+        const ang1 = getRandomInt(30) + 20
+        const ang2 = getRandomInt(30) + 20
 
-        const render = getRandomInt(likelihood)
-        const side = getRandomInt(3)
+        
 
+        // randomizes what direction the branches go it
         if (render > 5) {
             if (side === 0) {
-                draw(0, -len, len*0.8, -30, branchThickness*0.8, likelihood*1.5,ctx);
+                draw(0, -len, len*0.6, -ang2, branchThickness*0.8, likelihood*1.5,ctx);
             } else if (side === 1) {
-                draw(0, -len, len*0.8, 30, branchThickness*0.8, likelihood*1.5, ctx);
+                draw(0, -len, len*0.6, ang1, branchThickness*0.8, likelihood*1.5, ctx);
             } else {
-                draw(0, -len, len*0.8, -30, branchThickness*0.8, likelihood*1.5, ctx);
-                draw(0, -len, len*0.8, 30, branchThickness*0.8, likelihood*1.5, ctx);
+                draw(0, -len, len*0.6, -ang2, branchThickness*0.8, likelihood*1.5, ctx);
+                draw(0, -len, len*0.6, ang1, branchThickness*0.8, likelihood*1.5, ctx);
             }
             
         }
         
-        draw(0, -len, len*0.8, 0, branchThickness*0.8, likelihood*1.5, ctx);
+        draw(0, -len, len*0.6, 0, branchThickness*0.8, likelihood*1.5, ctx);
         
         
         ctx.restore();
@@ -125,9 +161,9 @@ const Canvas = props => {
         }
 
 
-        draw(x,y, 100, 25, 20, 10, context)
+        draw(x,y, 100, 40, 20, 10, context)
         draw(x,y, 100, 0, 20, 10,context)
-        draw(x,y, 100, -25, 20, 10, context)
+        draw(x,y, 100, -40, 20, 10, context)
         // draw(context)
     },[draw])
 
