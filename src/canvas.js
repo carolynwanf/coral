@@ -144,7 +144,12 @@ const Canvas = props => {
         const ang1 = getRandomInt(30) + 20
         const ang2 = getRandomInt(30) + 20
 
-        
+        let newLen;
+        if (branchThickness > 4 && branchThickness < 6) {
+            newLen = branchThickness*0.5
+        } else {
+            newLen = branchThickness*0.8
+        }
 
         
 
@@ -153,12 +158,12 @@ const Canvas = props => {
         // randomizes what direction the branches go it
         // if (render > 5) {
             if (side === 0) {
-                draw(0, -len, len*0.8, -ang2, branchThickness*0.8, likelihood*1.5,ctx);
+                draw(0, -len, newLen, -ang2, branchThickness*0.8, likelihood*1.5,ctx);
             } else if (side === 1) {
-                draw(0, -len, len*0.8, ang1, branchThickness*0.8, likelihood*1.5, ctx);
+                draw(0, -len, newLen, ang1, branchThickness*0.8, likelihood*1.5, ctx);
             } else {
-                draw(0, -len, len*0.8, -ang2, branchThickness*0.8, likelihood*1.5, ctx);
-                draw(0, -len, len*0.8, ang1, branchThickness*0.8, likelihood*1.5, ctx);
+                draw(0, -len, newLen, -ang2, branchThickness*0.8, likelihood*1.5, ctx);
+                draw(0, -len, newLen, ang1, branchThickness*0.8, likelihood*1.5, ctx);
             }
             
         // }
