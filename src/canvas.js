@@ -10,8 +10,8 @@ const Canvas = props => {
 
     function getClickPosition(e) {
         const position = getPosition(e.currentTarget, e.clientX, e.clientY)
-        const tempX = position.x -83
-        const tempY = position.y -143
+        const tempX = position.x - 144
+        const tempY = position.y -150
         setX(tempX);
         setY(tempY);    
     }
@@ -44,6 +44,7 @@ const Canvas = props => {
 
         // constants in order of use
         const radius = branchThickness/2
+        const color = '#ff4f72'
         const render = getRandomInt(likelihood)
         const side = getRandomInt(3)
         const end = getRandomInt(3)
@@ -79,7 +80,7 @@ const Canvas = props => {
                 ctx.bezierCurveTo(-10, -len/2, -10, -len/2, 0, -len);
             }
         }
-        ctx.strokeStyle = "#ff5c85"
+        ctx.strokeStyle = color
         ctx.lineWidth = branchThickness
         ctx.stroke();
 
@@ -87,12 +88,13 @@ const Canvas = props => {
 
         ctx.beginPath()
         ctx.save();
-        ctx.fillStyle = '#ff5c85'
+        ctx.fillStyle = color
         
         ctx.translate(startX, startY);
         ctx.rotate(angle * Math.PI/180);
 
         ctx.arc(0,0-(len*.95),radius,0,Math.PI,true)
+        
         ctx.fill()
 
 
@@ -101,15 +103,35 @@ const Canvas = props => {
         if (end > 1) {
             if(branchThickness < 10) {
                 // makes ends rounded
-                  ctx.restore();
+                ctx.restore();
+                ctx.beginPath()
+                ctx.save();
+                ctx.fillStyle = '#ffbac8'
+                
+                ctx.translate(startX, startY);
+                ctx.rotate(angle * Math.PI/180);
+    
+                ctx.arc(0,0-(len*.95),radius,0,2*Math.PI,true)
+                ctx.fill()
+                ctx.restore();
                   return;
             }
 
         }
 
-        if(branchThickness < 1) {
+        if(branchThickness < 9) {
             // makes ends rounded
-              ctx.restore();
+            ctx.restore();
+            ctx.beginPath()
+            ctx.save();
+            ctx.fillStyle = '#ffbac8'
+            
+            ctx.translate(startX, startY);
+            ctx.rotate(angle * Math.PI/180);
+
+            ctx.arc(0,0-(len*.95),radius,0,Math.PI,true)
+            ctx.fill()
+            ctx.restore();
               return;
         }
 
@@ -124,18 +146,22 @@ const Canvas = props => {
 
         
 
+        
+
+        
+
         // randomizes what direction the branches go it
-        if (render > 5) {
+        // if (render > 5) {
             if (side === 0) {
-                draw(0, -len, len*0.6, -ang2, branchThickness*0.8, likelihood*1.5,ctx);
+                draw(0, -len, len*0.8, -ang2, branchThickness*0.8, likelihood*1.5,ctx);
             } else if (side === 1) {
-                draw(0, -len, len*0.6, ang1, branchThickness*0.8, likelihood*1.5, ctx);
+                draw(0, -len, len*0.8, ang1, branchThickness*0.8, likelihood*1.5, ctx);
             } else {
-                draw(0, -len, len*0.6, -ang2, branchThickness*0.8, likelihood*1.5, ctx);
-                draw(0, -len, len*0.6, ang1, branchThickness*0.8, likelihood*1.5, ctx);
+                draw(0, -len, len*0.8, -ang2, branchThickness*0.8, likelihood*1.5, ctx);
+                draw(0, -len, len*0.8, ang1, branchThickness*0.8, likelihood*1.5, ctx);
             }
             
-        }
+        // }
         
         draw(0, -len, len*0.6, 0, branchThickness*0.8, likelihood*1.5, ctx);
         
