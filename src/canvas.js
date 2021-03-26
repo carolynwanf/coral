@@ -5,34 +5,7 @@ import React, {useRef, useEffect, useState} from 'react'
 const Canvas = props => {
     // initializes ref
     const canvasRef = useRef(null)
-    const [whatToDraw, setWhatToDraw] = useState('redCoral')
-
-    function drawRedCoral (tempX,tempY) {
-       // makes it so that there are different colors
-        const offset = getRandomInt(40)
-
-        const color = {
-            red: 255,
-            green: offset + 100,
-            blue: offset + 100,
-        }
-
-        draw(tempX,tempY, 100, 40, 20, 10, color)
-        draw(tempX,tempY, 100, 0, 20, 10, color)
-        draw(tempX,tempY, 100, -40, 20, 10, color)
-    }
-
-    function getClickPosition(e) {
-        console.log(e.current)
-
-        const tempX = e.clientX
-        const tempY = e.clientY   
-        
-        drawRedCoral(tempX,tempY)
-       
-    }
-
-    // random integer function
+    
     const getRandomInt = (max) => {
         return Math.ceil(Math.random() * Math.ceil(max));
     }
@@ -51,7 +24,7 @@ const Canvas = props => {
         const side = getRandomInt(3)
         
     
-        if (branchThickness === 20) {
+        if (branchThickness === 20 || branchThickness === 18) {
             ctx.beginPath()
             ctx.save();
             ctx.fillStyle = coralColor
@@ -73,14 +46,18 @@ const Canvas = props => {
         ctx.translate(startX, startY);
         ctx.rotate(angle * Math.PI/180);
         ctx.moveTo(0, 0);
-        if (branchThickness < 15) {
-            ctx.lineTo(0, -len);
-        } else {
-            if(angle > 0) {
-                ctx.bezierCurveTo(15, -len/2, 10, -len/2, 0, -len);
+        if (color.red === 255) {
+            if (branchThickness < 15) {
+                ctx.lineTo(0, -len);
             } else {
-                ctx.bezierCurveTo(-15, -len/2, -10, -len/2, 0, -len);
-            }
+                if(angle > 0) {
+                    ctx.bezierCurveTo(15, -len/2, 10, -len/2, 0, -len);
+                } else {
+                    ctx.bezierCurveTo(-15, -len/2, -10, -len/2, 0, -len);
+                }
+            } 
+        } else {
+            ctx.lineTo(0, -len);
         }
         ctx.strokeStyle = coralColor
         ctx.lineWidth = branchThickness
@@ -91,45 +68,50 @@ const Canvas = props => {
         ctx.beginPath()
         ctx.save();
         ctx.fillStyle = coralColor
-        
         ctx.translate(startX, startY);
         ctx.rotate(angle * Math.PI/180);
-    
-        ctx.arc(0,0-(len*.95),radius,0,Math.PI,true)
-        
+        ctx.arc(0,0-(len*.95),radius,0,Math.PI,true);
         ctx.fill()
     
     
         const end = getRandomInt(3)
+        const terminate = color.red === 255 ? 10 : 14
     
-        // stops generating if end === 2 and branch is less than 10 px thick
+        // stops generating if end === 2 and branch is less than terminate px thick
         if (end > 1) {
-            if(branchThickness < 10) {
+            if(branchThickness < terminate) {
                 // makes ends rounded
                 ctx.restore();
                 ctx.beginPath()
                 ctx.save();
-                ctx.fillStyle = '#ffbac8'
-                
+                if (color.red === 255) {
+                    ctx.fillStyle = '#ffbac8'
+                } else {
+                    ctx.fillStyle = '#fffce3'
+                }
                 ctx.translate(startX, startY);
                 ctx.rotate(angle * Math.PI/180);
     
                 ctx.arc(0,0-(len*.95),radius,0,2*Math.PI,true)
                 ctx.fill()
                 ctx.restore();
-                  return;
+                return;
             }
     
         }
     
-        // always shops generating if branch thickness is less than four
-        if(branchThickness < 4) {
+        // always shops generating if branch thickness is less than terminate-5
+        if(branchThickness < terminate-5) {
     
             // draws light pink circles on the ends
             ctx.restore();
             ctx.beginPath()
             ctx.save();
-            ctx.fillStyle = '#ffbac8';
+            if (color.red === 255) {
+                ctx.fillStyle = '#ffbac8'
+            } else {
+                ctx.fillStyle = '#fffce3'
+            }
             ctx.translate(startX, startY);
             ctx.rotate(angle * Math.PI/180);
             ctx.arc(0,0-(len*.95),radius,0,Math.PI,true);
@@ -143,16 +125,17 @@ const Canvas = props => {
         const ang2 = getRandomInt(30) + 20
     
         // makes branches progressively shorter, change to make it look more tree-like!
-        const newLen = len*0.5
+        const newLen =  color.red === 255 ? len*0.5 : len*0.93
+        const newThickness = color.red === 255 ? branchThickness*0.8 : branchThickness*0.93
     
         // randomizes if the branches formed are left, right, or both
         if (side === 0) {
-            draw(0, -len, newLen, -ang2, branchThickness*0.8, likelihood*1.5, color);
+            draw(0, -len, newLen, -ang2, newThickness, likelihood*1.5, color);
         } else if (side === 1) {
-            draw(0, -len, newLen, ang1, branchThickness*0.8, likelihood*1.5, color);
+            draw(0, -len, newLen, ang1, newThickness, likelihood*1.5, color);
         } else {
-            draw(0, -len, newLen, -ang2, branchThickness*0.8, likelihood*1.5, color);
-            draw(0, -len, newLen, ang1, branchThickness*0.8, likelihood*1.5, color);
+            draw(0, -len, newLen, -ang2, newThickness, likelihood*1.5, color);
+            draw(0, -len, newLen, ang1, newThickness, likelihood*1.5, color);
         }    
     
         // draws a straight branch ALWAYS
@@ -161,6 +144,60 @@ const Canvas = props => {
         // restores context before next call
         ctx.restore();
     }
+
+    // initializes 
+    const [whatToDraw, setWhatToDraw] = useState('redCoral')
+
+    function drawRed(x,y) {
+        // makes it so that there are different colors
+        const offset = getRandomInt(40)
+
+        const color = {
+            red: 255,
+            green: offset + 100,
+            blue: offset + 100,
+        }
+
+        draw(x,y, 100, 40, 20, 10, color)
+        draw(x,y, 100, 0, 20, 10, color)
+        draw(x,y, 100, -40, 20, 10, color)
+    }
+
+    function drawYellow(x,y) {
+        // makes it so that there are different colors
+        const color = {
+            red: 222,
+            green: getRandomInt(10) + 190,
+            blue: getRandomInt(130),
+        }
+
+        draw(x,y, 70, 50, 18, 10, color)
+        draw(x,y, 70, 0, 18, 10, color)
+        draw(x,y, 70, -50, 18, 10, color)
+    }
+
+    // gets position and draws at position
+    function getClickPosition(e) {
+        console.log(e.currentTarget.getBoundingClientRect().left)
+
+        const distFromLeft = e.currentTarget.getBoundingClientRect().left
+        const distFromTop = e.currentTarget.getBoundingClientRect().top
+
+        const x = e.clientX - distFromLeft
+        const y = e.clientY - distFromTop
+
+       if (whatToDraw === 'redCoral') {
+           drawRed(x,y)
+       } else if (whatToDraw === 'yellowCoral') {
+           drawYellow(x,y)
+       }
+    }
+
+    //
+    function handleSwitch(e) {
+        setWhatToDraw(e.target.id)
+    }
+    
 
     // so that getContext isn't called until after component has mounted
     useEffect(() => {
@@ -176,10 +213,6 @@ const Canvas = props => {
         canvas.width = width
         canvas.height = height
         }
-
-
-        
-        // draw(context)
     },[])
 
     console.log('rendered')
@@ -188,8 +221,8 @@ const Canvas = props => {
         <div>
             <canvas onClick={getClickPosition} ref={canvasRef} id='responsive-canvas' className='coral-container'{...props}/>
             <div className='buttons'>
-                <button>Red Coral</button> 
-                <button>Yellow Coral</button>
+                <button onClick={handleSwitch} id='redCoral'>Red Coral</button> 
+                <button onClick={handleSwitch} id='yellowCoral'>Yellow Coral</button>
                 {/* <button>Fish</button> */}
             </div>
         </div>
