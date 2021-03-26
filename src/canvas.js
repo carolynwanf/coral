@@ -22,12 +22,12 @@ const Canvas = props => {
         setY(tempY); 
         
         
-        
+        const offset = getRandomInt(40)
 
         const color = {
             red: 255,
-            green: getRandomInt(80) + 50,
-            blue: getRandomInt(50) + 100,
+            green: offset + 100,
+            blue: offset + 100,
         }
         
         draw(tempX,tempY, 100, 40, 20, 10, color)
