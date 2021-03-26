@@ -3,25 +3,12 @@ import React, {useRef, useEffect, useState} from 'react'
 
 
 const Canvas = props => {
-
+    // initializes ref
     const canvasRef = useRef(null)
+    const [whatToDraw, setWhatToDraw] = useState('redCoral')
 
-    const [x, setX] = useState(150)
-    const [y, setY] = useState(140)
-
-    function getClickPosition(e) {
-        
-
-        console.log(e.current)
-
-        const tempX = e.clientX
-        const tempY = e.clientY
-
-        // initiates re-render so tree is drawn at new x,y
-        setX(tempX);
-        setY(tempY); 
-        
-        
+    function drawRedCoral (tempX,tempY) {
+       // makes it so that there are different colors
         const offset = getRandomInt(40)
 
         const color = {
@@ -29,10 +16,20 @@ const Canvas = props => {
             green: offset + 100,
             blue: offset + 100,
         }
-        
+
         draw(tempX,tempY, 100, 40, 20, 10, color)
         draw(tempX,tempY, 100, 0, 20, 10, color)
         draw(tempX,tempY, 100, -40, 20, 10, color)
+    }
+
+    function getClickPosition(e) {
+        console.log(e.current)
+
+        const tempX = e.clientX
+        const tempY = e.clientY   
+        
+        drawRedCoral(tempX,tempY)
+       
     }
 
     // random integer function
@@ -80,9 +77,9 @@ const Canvas = props => {
             ctx.lineTo(0, -len);
         } else {
             if(angle > 0) {
-                ctx.bezierCurveTo(10, -len/2, 10, -len/2, 0, -len);
+                ctx.bezierCurveTo(15, -len/2, 10, -len/2, 0, -len);
             } else {
-                ctx.bezierCurveTo(-10, -len/2, -10, -len/2, 0, -len);
+                ctx.bezierCurveTo(-15, -len/2, -10, -len/2, 0, -len);
             }
         }
         ctx.strokeStyle = coralColor
@@ -187,7 +184,16 @@ const Canvas = props => {
 
     console.log('rendered')
 
-    return <canvas onClick={getClickPosition} ref={canvasRef} id='responsive-canvas' className='coral-container'{...props}/>
+    return (
+        <div>
+            <canvas onClick={getClickPosition} ref={canvasRef} id='responsive-canvas' className='coral-container'{...props}/>
+            <div className='buttons'>
+                <button>Red Coral</button> 
+                <button>Yellow Coral</button>
+                {/* <button>Fish</button> */}
+            </div>
+        </div>
+    )
 }
 
 export default Canvas
