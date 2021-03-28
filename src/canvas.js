@@ -1,10 +1,15 @@
 import React, {useRef, useEffect, useState} from 'react'
 // import draw from './draw'
 
+var seed = ''
+
+var seeds = []
 
 const Canvas = props => {
     // initializes ref
     const canvasRef = useRef(null)
+
+   
     
     const getRandomInt = (max) => {
         return Math.ceil(Math.random() * Math.ceil(max));
@@ -20,8 +25,13 @@ const Canvas = props => {
         // constants 
         const radius = branchThickness/2
         const coralColor = `rgb(${color.red},${color.green},${color.blue})`
-        const render = getRandomInt(likelihood)
         const side = getRandomInt(3)
+        const end = getRandomInt(3)
+        // randomly generates angles at which branches protrude
+        const ang1 = getRandomInt(30) + 20
+        const ang2 = getRandomInt(30) + 20
+
+        seed = seed + side + end + ang1 + ang2
         
     
         if (branchThickness === 20 || branchThickness === 18) {
@@ -74,11 +84,11 @@ const Canvas = props => {
         ctx.fill()
     
     
-        const end = getRandomInt(3)
+        
         const terminate = color.red === 255 ? 10 : 14
     
         // stops generating if end === 2 and branch is less than terminate px thick
-        if (end > 1) {
+        if (end > 2) {
             if(branchThickness < terminate) {
                 // makes ends rounded
                 ctx.restore();
@@ -120,15 +130,14 @@ const Canvas = props => {
             return;
         }
     
-        // randomly generates angles at which branches protrude
-        const ang1 = getRandomInt(30) + 20
-        const ang2 = getRandomInt(30) + 20
+        
     
         // makes branches progressively shorter, change to make it look more tree-like!
         const newLen =  color.red === 255 ? len*0.5 : len*0.93
-        const newThickness = color.red === 255 ? branchThickness*0.8 : branchThickness*0.93
+        const newThickness = color.red === 255 ? branchThickness*0.8 : branchThickness*0.8
     
         // randomizes if the branches formed are left, right, or both
+        console.log(side)
         if (side === 0) {
             draw(0, -len, newLen, -ang2, newThickness, likelihood*1.5, color);
         } else if (side === 1) {
@@ -148,6 +157,7 @@ const Canvas = props => {
     // initializes 
     const [whatToDraw, setWhatToDraw] = useState('redCoral')
 
+    //draws red coral
     function drawRed(x,y) {
         // makes it so that there are different colors
         const offset = getRandomInt(40)
@@ -163,6 +173,7 @@ const Canvas = props => {
         draw(x,y, 100, -40, 20, 10, color)
     }
 
+    // draws yellow coral
     function drawYellow(x,y) {
         // makes it so that there are different colors
         const color = {
@@ -174,6 +185,7 @@ const Canvas = props => {
         draw(x,y, 70, 50, 18, 10, color)
         draw(x,y, 70, 0, 18, 10, color)
         draw(x,y, 70, -50, 18, 10, color)
+
     }
 
     // gets position and draws at position
@@ -191,6 +203,11 @@ const Canvas = props => {
        } else if (whatToDraw === 'yellowCoral') {
            drawYellow(x,y)
        }
+
+        seeds.push(seed)
+        seed=''
+        console.log(seeds)
+
     }
 
     //
@@ -201,11 +218,12 @@ const Canvas = props => {
 
     // so that getContext isn't called until after component has mounted
     useEffect(() => {
+
+        // makes it responsive
         const canvas = canvasRef.current
         console.log(canvas, canvasRef)
         const context = canvas.getContext('2d')
         console.log('context',context)
-
 
         const { width, height } = canvas.getBoundingClientRect()
 
