@@ -2,14 +2,16 @@ import React, {useRef, useEffect, useState} from 'react'
 import seedrandom from 'seedrandom'
 import crypto from 'crypto'
 
-var id = crypto.randomBytes(10).toString('hex');
+// var id = crypto.randomBytes(10).toString('hex');
+var id = 'hello'
 console.log(typeof id)
 
 const Canvas = props => {
     // initializes ref
     const canvasRef = useRef(null)
+    const [id,setId] = useState(crypto.randomBytes(10).toString('hex'))
 
-    seedrandom('0feb0833dcb4eb6cc0ea',{global:true})
+    seedrandom(id,{global:true})
 
     const getRandomInt = (max) => {
         return Math.ceil(Math.random() * Math.ceil(max));
@@ -18,7 +20,6 @@ const Canvas = props => {
     // draw function!
     const draw = (startX, startY, len, angle, branchThickness, likelihood, color) => {
         const ctx = canvasRef.current.getContext('2d')
-        console.log('draw called')
     
         
     
@@ -31,12 +32,6 @@ const Canvas = props => {
         const ang1 = getRandomInt(30) + 20
         const ang2 = getRandomInt(30) + 20
 
-        console.log(side,end,ang1,ang2)
-
-
-
-        
-    
         if (branchThickness === 20 || branchThickness === 18) {
             ctx.beginPath()
             ctx.save();
@@ -140,7 +135,6 @@ const Canvas = props => {
         const newThickness = color.red === 255 ? branchThickness*0.8 : branchThickness*0.8
     
         // randomizes if the branches formed are left, right, or both
-        console.log(side)
         if (side === 0) {
             draw(0, -len, newLen, -ang2, newThickness, likelihood*1.5, color);
         } else if (side === 1) {
@@ -193,28 +187,42 @@ const Canvas = props => {
 
     // gets position and draws at position
     function getClickPosition(e) {
-        console.log(e.currentTarget.getBoundingClientRect().left)
 
-        const distFromLeft = e.currentTarget.getBoundingClientRect().left
-        const distFromTop = e.currentTarget.getBoundingClientRect().top
+    //     const distFromLeft = e.currentTarget.getBoundingClientRect().left
+    //     const distFromTop = e.currentTarget.getBoundingClientRect().top
 
-        const x = e.clientX - distFromLeft
-        const y = e.clientY - distFromTop
+    //     const x = e.clientX - distFromLeft
+    //     const y = e.clientY - distFromTop
 
-       if (whatToDraw === 'redCoral') {
-           drawRed(x,y)
-       } else if (whatToDraw === 'yellowCoral') {
-           drawYellow(x,y)
-       }
+    //    if (whatToDraw === 'redCoral') {
+    //        drawRed(x,y)
+    //    } else if (whatToDraw === 'yellowCoral') {
+    //        drawYellow(x,y)
+    //    }
 
   
 
+    }
+
+    let seed;
+
+    const handleChange = (e) => {
+        seed = e.target.value;
+    }
+
+    const handleEnter = (e) => {
+        if (e.key === 'Enter') {
+            setId(seed)
+        }
+
+        console.log('after enter',id)
     }
 
     //
     function handleSwitch(e) {
         setWhatToDraw(e.target.id)
     }
+
     
 
     // so that getContext isn't called until after component has mounted
@@ -232,7 +240,12 @@ const Canvas = props => {
         canvas.width = width
         canvas.height = height
         }
-    },[])
+
+        const x = getRandomInt(width) + canvas.getBoundingClientRect().left
+        const y = getRandomInt(height) + canvas.getBoundingClientRect().top
+
+        drawRed(x,y)
+    },[id])
 
     console.log('rendered')
 
@@ -243,7 +256,16 @@ const Canvas = props => {
                 <button onClick={handleSwitch} id='redCoral'>Red Coral</button> 
                 <button onClick={handleSwitch} id='yellowCoral'>Yellow Coral</button>
                 {/* <button>Fish</button> */}
+                <input
+                    value={seed}
+                    type='text'
+                    onChange={handleChange}
+                    placeholder="use a seed"
+                    onKeyPress={handleEnter}
+                    className='taskInput'
+                ></input>
             </div>
+            <p>seed for this picture: {id}</p>
         </div>
     )
 }
