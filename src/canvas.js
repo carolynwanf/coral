@@ -1,16 +1,16 @@
 import React, {useRef, useEffect, useState} from 'react'
-// import draw from './draw'
+import seedrandom from 'seedrandom'
+import crypto from 'crypto'
 
-var seed = ''
-
-var seeds = []
+var id = crypto.randomBytes(10).toString('hex');
+console.log(typeof id)
 
 const Canvas = props => {
     // initializes ref
     const canvasRef = useRef(null)
 
-   
-    
+    seedrandom('0feb0833dcb4eb6cc0ea',{global:true})
+
     const getRandomInt = (max) => {
         return Math.ceil(Math.random() * Math.ceil(max));
     }
@@ -31,7 +31,10 @@ const Canvas = props => {
         const ang1 = getRandomInt(30) + 20
         const ang2 = getRandomInt(30) + 20
 
-        seed = seed + side + end + ang1 + ang2
+        console.log(side,end,ang1,ang2)
+
+
+
         
     
         if (branchThickness === 20 || branchThickness === 18) {
@@ -204,9 +207,7 @@ const Canvas = props => {
            drawYellow(x,y)
        }
 
-        seeds.push(seed)
-        seed=''
-        console.log(seeds)
+  
 
     }
 
