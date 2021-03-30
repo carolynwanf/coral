@@ -9,7 +9,8 @@ console.log(typeof id)
 const Canvas = props => {
     // initializes ref
     const canvasRef = useRef(null)
-    const [id,setId] = useState(crypto.randomBytes(10).toString('hex'))
+    const buttonRef = useRef(null)
+    const [id,setId] = useState(crypto.randomBytes(5).toString('hex'))
 
     seedrandom(id,{global:true})
 
@@ -18,11 +19,9 @@ const Canvas = props => {
     }
     
     // draw function!
-    const draw = (startX, startY, len, angle, branchThickness, likelihood, color) => {
+    const draw = (startX, startY, len, angle, branchThickness, initialThickness, baseBranch,color) => {
         const ctx = canvasRef.current.getContext('2d')
-    
-        
-    
+
         // constants 
         const radius = branchThickness/2
         const coralColor = `rgb(${color.red},${color.green},${color.blue})`
@@ -32,7 +31,7 @@ const Canvas = props => {
         const ang1 = getRandomInt(30) + 20
         const ang2 = getRandomInt(30) + 20
 
-        if (branchThickness === 20 || branchThickness === 18) {
+        if (baseBranch) {
             ctx.beginPath()
             ctx.save();
             ctx.fillStyle = coralColor
@@ -54,8 +53,8 @@ const Canvas = props => {
         ctx.translate(startX, startY);
         ctx.rotate(angle * Math.PI/180);
         ctx.moveTo(0, 0);
-        if (color.red === 255) {
-            if (branchThickness < 15) {
+        if (color.red === 247) {
+            if (branchThickness < 0.80*initialThickness) {
                 ctx.lineTo(0, -len);
             } else {
                 if(angle > 0) {
@@ -82,8 +81,8 @@ const Canvas = props => {
         ctx.fill()
     
     
-        
-        const terminate = color.red === 255 ? 10 : 14
+        //FIX
+        const terminate = color.red === 247 ? initialThickness/2 : initialThickness * 0.78
     
         // stops generating if end === 2 and branch is less than terminate px thick
         if (end > 2) {
@@ -92,8 +91,8 @@ const Canvas = props => {
                 ctx.restore();
                 ctx.beginPath()
                 ctx.save();
-                if (color.red === 255) {
-                    ctx.fillStyle = '#ffbac8'
+                if (color.red === 247) {
+                    ctx.fillStyle = '#f5d5e6'
                 } else {
                     ctx.fillStyle = '#fffce3'
                 }
@@ -109,14 +108,14 @@ const Canvas = props => {
         }
     
         // always shops generating if branch thickness is less than terminate-5
-        if(branchThickness < terminate-5) {
+        if(branchThickness < terminate-3) {
     
             // draws light pink circles on the ends
             ctx.restore();
             ctx.beginPath()
             ctx.save();
-            if (color.red === 255) {
-                ctx.fillStyle = '#ffbac8'
+            if (color.red === 247) {
+                ctx.fillStyle = '#f5d5e6'
             } else {
                 ctx.fillStyle = '#fffce3'
             }
@@ -131,76 +130,68 @@ const Canvas = props => {
         
     
         // makes branches progressively shorter, change to make it look more tree-like!
-        const newLen =  color.red === 255 ? len*0.5 : len*0.93
-        const newThickness = color.red === 255 ? branchThickness*0.8 : branchThickness*0.8
+        const newLen =  color.red === 247 ? len*0.5 : len*0.93
+        const newThickness = color.red === 247 ? branchThickness*0.8 : branchThickness*0.8
+
+        const newBaseBranch = false
     
         // randomizes if the branches formed are left, right, or both
         if (side === 0) {
-            draw(0, -len, newLen, -ang2, newThickness, likelihood*1.5, color);
+            draw(0, -len, newLen, -ang2, newThickness, initialThickness, newBaseBranch, color);
         } else if (side === 1) {
-            draw(0, -len, newLen, ang1, newThickness, likelihood*1.5, color);
+            draw(0, -len, newLen, ang1, newThickness, initialThickness, newBaseBranch, color);
         } else {
-            draw(0, -len, newLen, -ang2, newThickness, likelihood*1.5, color);
-            draw(0, -len, newLen, ang1, newThickness, likelihood*1.5, color);
+            draw(0, -len, newLen, -ang2, newThickness, initialThickness, newBaseBranch, color);
+            draw(0, -len, newLen, ang1, newThickness, initialThickness, newBaseBranch, color);
         }    
     
         // draws a straight branch ALWAYS
-        draw(0, -len, len*0.6, 0, branchThickness*0.8, likelihood*1.5, color);
+        draw(0, -len, newLen, 0, newThickness, initialThickness, newBaseBranch, color);
         
         // restores context before next call
         ctx.restore();
     }
 
-    // initializes 
-    const [whatToDraw, setWhatToDraw] = useState('redCoral')
-
     //draws red coral
     function drawRed(x,y) {
-        // makes it so that there are different colors
-        const offset = getRandomInt(40)
-
+        // makes it so that there are different color
         const color = {
-            red: 255,
-            green: offset + 100,
-            blue: offset + 100,
+            red: 247,
+            green: 138,
+            blue: 138,
         }
 
-        draw(x,y, 100, 40, 20, 10, color)
-        draw(x,y, 100, 0, 20, 10, color)
-        draw(x,y, 100, -40, 20, 10, color)
+        const numOfBranches = 3
+        const thickness = getRandomInt(10) + 10
+        var angle = -70
+
+        for (let i = 0; i < numOfBranches; i++) {
+            angle = angle+35
+            draw(x,y, 5*thickness, angle, thickness, thickness, true, color)
+
+        }
+
+        //inputs: startX, startY, len, angle, branchThickness color
     }
 
     // draws yellow coral
     function drawYellow(x,y) {
         // makes it so that there are different colors
         const color = {
-            red: 222,
-            green: getRandomInt(10) + 190,
-            blue: getRandomInt(130),
+            red: 246,
+            green: 207,
+            blue: 100,
         }
 
-        draw(x,y, 70, 50, 18, 10, color)
-        draw(x,y, 70, 0, 18, 10, color)
-        draw(x,y, 70, -50, 18, 10, color)
+        const numOfBranches = 3
+        const thickness = getRandomInt(4) + 8
+        var angle = -100
 
-    }
+        for (let i = 0; i < numOfBranches; i++) {
+            angle = angle+50
+            draw(x,y, 3.9*thickness, angle, thickness, thickness, true, color)
 
-    // gets position and draws at position
-    function getClickPosition(e) {
-
-    //     const distFromLeft = e.currentTarget.getBoundingClientRect().left
-    //     const distFromTop = e.currentTarget.getBoundingClientRect().top
-
-    //     const x = e.clientX - distFromLeft
-    //     const y = e.clientY - distFromTop
-
-    //    if (whatToDraw === 'redCoral') {
-    //        drawRed(x,y)
-    //    } else if (whatToDraw === 'yellowCoral') {
-    //        drawYellow(x,y)
-    //    }
-
-  
+        }
 
     }
 
@@ -218,11 +209,6 @@ const Canvas = props => {
         console.log('after enter',id)
     }
 
-    //
-    function handleSwitch(e) {
-        setWhatToDraw(e.target.id)
-    }
-
     
 
     // so that getContext isn't called until after component has mounted
@@ -232,7 +218,6 @@ const Canvas = props => {
         const canvas = canvasRef.current
         console.log(canvas, canvasRef)
         const context = canvas.getContext('2d')
-        console.log('context',context)
 
         const { width, height } = canvas.getBoundingClientRect()
 
@@ -241,20 +226,41 @@ const Canvas = props => {
         canvas.height = height
         }
 
-        const x = getRandomInt(width) + canvas.getBoundingClientRect().left
-        const y = getRandomInt(height) + canvas.getBoundingClientRect().top
+        const top = canvas.getBoundingClientRect().top
+        const left = canvas.getBoundingClientRect().left
 
-        drawRed(x,y)
+        // draws sand
+        const sandHeight = getRandomInt(height/3) + height/3
+        console.log(sandHeight)
+
+        context.fillStyle = '#6cb5c3';
+        context.fillRect(0,sandHeight,width,height-sandHeight)
+
+        const redToGenerate = getRandomInt(5) +2
+        const yellowToGenerate = getRandomInt(5) +2
+        for (let i = 0; i<redToGenerate; i++) {
+            const x = getRandomInt(width) + canvas.getBoundingClientRect().left
+            const y = getRandomInt(height-sandHeight) + sandHeight
+
+            drawRed(x,y)
+        }
+        for (let i = 0; i<yellowToGenerate; i++) {
+            const x = getRandomInt(width) + canvas.getBoundingClientRect().left
+            const y = getRandomInt(height-sandHeight) + sandHeight
+
+            drawYellow(x,y)
+        }
     },[id])
 
     console.log('rendered')
 
     return (
         <div>
-            <canvas onClick={getClickPosition} ref={canvasRef} id='responsive-canvas' className='coral-container'{...props}/>
+            <canvas ref={canvasRef} id='responsive-canvas' className='coral-container'{...props}/>
             <div className='buttons'>
-                <button onClick={handleSwitch} id='redCoral'>Red Coral</button> 
-                <button onClick={handleSwitch} id='yellowCoral'>Yellow Coral</button>
+                <button ref={buttonRef} className="downloadButton"></button>
+                {/* <button onClick={handleSwitch} id='redCoral'>Red Coral</button> 
+                <button onClick={handleSwitch} id='yellowCoral'>Yellow Coral</button> */}
                 {/* <button>Fish</button> */}
                 <input
                     value={seed}

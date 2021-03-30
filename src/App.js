@@ -17,7 +17,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Coral</h1>
+      <h1>Coral Reef Generator</h1>
       <body onLoad={draw}>
         <Canvas/>
       </body>
