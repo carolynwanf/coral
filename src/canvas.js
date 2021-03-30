@@ -9,7 +9,7 @@ console.log(typeof id)
 const Canvas = props => {
     // initializes ref
     const canvasRef = useRef(null)
-    const buttonRef = useRef(null)
+    const linkRef = useRef(null)
     const [id,setId] = useState(crypto.randomBytes(5).toString('hex'))
 
     seedrandom(id,{global:true})
@@ -216,7 +216,6 @@ const Canvas = props => {
 
         // makes it responsive
         const canvas = canvasRef.current
-        console.log(canvas, canvasRef)
         const context = canvas.getContext('2d')
 
         const { width, height } = canvas.getBoundingClientRect()
@@ -233,8 +232,12 @@ const Canvas = props => {
         const sandHeight = getRandomInt(height/3) + height/3
         console.log(sandHeight)
 
+        context.fillStyle = '#003ea5';
+        context.fillRect(0,0,width,sandHeight)
+
         context.fillStyle = '#6cb5c3';
         context.fillRect(0,sandHeight,width,height-sandHeight)
+
 
         const redToGenerate = getRandomInt(5) +2
         const yellowToGenerate = getRandomInt(5) +2
@@ -252,16 +255,18 @@ const Canvas = props => {
         }
     },[id])
 
-    console.log('rendered')
+    function handleDownload() {
+        const link = linkRef.current
+        const canvas = canvasRef.current
+        link.download = 'coral.jpeg';
+        link.href = canvas.toDataURL('image/jpeg');
+    }
 
     return (
         <div>
             <canvas ref={canvasRef} id='responsive-canvas' className='coral-container'{...props}/>
             <div className='buttons'>
-                <button ref={buttonRef} className="downloadButton"></button>
-                {/* <button onClick={handleSwitch} id='redCoral'>Red Coral</button> 
-                <button onClick={handleSwitch} id='yellowCoral'>Yellow Coral</button> */}
-                {/* <button>Fish</button> */}
+                <a href='#' ref={linkRef} className="downloadButton" onClick={handleDownload}>download</a>
                 <input
                     value={seed}
                     type='text'
