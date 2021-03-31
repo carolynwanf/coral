@@ -2,10 +2,6 @@ import React, {useRef, useEffect, useState} from 'react'
 import seedrandom from 'seedrandom'
 import crypto from 'crypto'
 
-// var id = crypto.randomBytes(10).toString('hex');
-var id = 'hello'
-console.log(typeof id)
-
 const Canvas = props => {
     // initializes ref
     const canvasRef = useRef(null)
@@ -44,8 +40,6 @@ const Canvas = props => {
     
             ctx.restore()
         }
-        
-        
     
         // draw branch, draws curved branches at the base and straight ones at the top
         ctx.beginPath()
@@ -79,12 +73,10 @@ const Canvas = props => {
         ctx.rotate(angle * Math.PI/180);
         ctx.arc(0,0-(len*.95),radius,0,Math.PI,true);
         ctx.fill()
-    
-    
-        //FIX
+
         const terminate = color.red === 247 ? initialThickness/2 : initialThickness * 0.78
     
-        // stops generating if end === 2 and branch is less than terminate px thick
+        // stops generating if end === 3 and branch is less than terminate px thick
         if (end > 2) {
             if(branchThickness < terminate) {
                 // makes ends rounded
@@ -221,24 +213,25 @@ const Canvas = props => {
         const { width, height } = canvas.getBoundingClientRect()
 
         if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width
-        canvas.height = height
+            const { devicePixelRatio:ratio=1 } = window
+            const context = canvas.getContext('2d')
+            canvas.width = width*ratio
+            canvas.height = height*ratio
+            context.scale(ratio, ratio)
         }
-
-        const top = canvas.getBoundingClientRect().top
-        const left = canvas.getBoundingClientRect().left
 
         // draws sand
         const sandHeight = getRandomInt(height/3) + height/3
         console.log(sandHeight)
 
-        context.fillStyle = '#003ea5';
-        context.fillRect(0,0,width,sandHeight)
-
-        context.fillStyle = '#6cb5c3';
+        context.fillStyle = '#9acfd6';
         context.fillRect(0,sandHeight,width,height-sandHeight)
 
+        //draws water
+        context.fillStyle = '#1673c0';
+        context.fillRect(0,0,width,sandHeight)
 
+        // generates scenery
         const redToGenerate = getRandomInt(5) +2
         const yellowToGenerate = getRandomInt(5) +2
         for (let i = 0; i<redToGenerate; i++) {
@@ -258,15 +251,21 @@ const Canvas = props => {
     function handleDownload() {
         const link = linkRef.current
         const canvas = canvasRef.current
-        link.download = 'coral.jpeg';
         link.href = canvas.toDataURL('image/jpeg');
+        link.download = 'coral.jpeg';
+        
+    }
+
+    function newPicture() {
+        setId(crypto.randomBytes(5).toString('hex'))
     }
 
     return (
         <div>
             <canvas ref={canvasRef} id='responsive-canvas' className='coral-container'{...props}/>
             <div className='buttons'>
-                <a href='#' ref={linkRef} className="downloadButton" onClick={handleDownload}>download</a>
+                <a href='' ref={linkRef} className="downloadButton" onClick={handleDownload}>download</a>
+                <button onClick={newPicture}>new picture</button>
                 <input
                     value={seed}
                     type='text'
@@ -282,20 +281,3 @@ const Canvas = props => {
 }
 
 export default Canvas
-
-
-// practice draw function
-// const draw = ctx => {
-//     // random
-
-
-//     ctx.fillStyle = '#ff5c85'
-//     ctx.beginPath()
-
-//     console.log(ctx.beginPath())
-    
-//     for (let i=0; i<6;i++) {
-//         ctx.arc(x, y-(i*10), 10, 0, 2*Math.PI)
-//     }
-//     ctx.fill()
-// }

@@ -38,11 +38,11 @@
 }
 
 .coral-container{
-  border:1px solid #282c34;
-  background-color: #003ea5;
+  /* border:1px solid #282c34; */
+  background-color: #1673c0;
 }
 
 #responsive-canvas {
   width: 90%;
-  height: 90vmin
+  height: 95vmin
 }
