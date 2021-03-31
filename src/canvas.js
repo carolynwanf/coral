@@ -6,10 +6,14 @@ const Canvas = props => {
     // initializes ref
     const canvasRef = useRef(null)
     const linkRef = useRef(null)
+
+    // intializes id with random string
     const [id,setId] = useState(crypto.randomBytes(5).toString('hex'))
 
+    // makes math.random use this id
     seedrandom(id,{global:true})
 
+    //function for getting random integer between 1 and max inclusive
     const getRandomInt = (max) => {
         return Math.ceil(Math.random() * Math.ceil(max));
     }
@@ -147,6 +151,7 @@ const Canvas = props => {
         ctx.restore();
     }
 
+    // drawers
     // draws red coral
     function drawRed(x,y) {
         // makes it so that there are different color
@@ -190,6 +195,21 @@ const Canvas = props => {
 
         }
 
+    }
+
+    // handlers
+    // lets user download image when download button is pressed
+    function handleDownload() {
+        const link = linkRef.current
+        const canvas = canvasRef.current
+        link.href = canvas.toDataURL('image/jpeg');
+        link.download = 'coral.jpeg';
+        
+    }
+
+    // generates a new picture
+    function newPicture() {
+        setId(crypto.randomBytes(5).toString('hex'))
     }
 
     let seed;
@@ -253,19 +273,7 @@ const Canvas = props => {
         }
     },[id])
 
-    // lets user download image when download button is pressed
-    function handleDownload() {
-        const link = linkRef.current
-        const canvas = canvasRef.current
-        link.href = canvas.toDataURL('image/jpeg');
-        link.download = 'coral.jpeg';
-        
-    }
-
-    // generates a new picture
-    function newPicture() {
-        setId(crypto.randomBytes(5).toString('hex'))
-    }
+    
 
     return (
         <div>
