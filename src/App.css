@@ -40,9 +40,19 @@
 .coral-container{
   /* border:1px solid #282c34; */
   background-color: #1673c0;
+  margin-top: 1vmin;
 }
 
 #responsive-canvas {
-  width: 90%;
-  height: 95vmin
+  width: 190vmin;
+  height: 95vmin;
+}
+
+.seed {
+  display:inline;
+  padding: 1vmin;
+}
+
+p {
+  display:inline;
 }

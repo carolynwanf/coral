@@ -2,10 +2,14 @@ import React, {useRef, useEffect, useState} from 'react'
 import seedrandom from 'seedrandom'
 import crypto from 'crypto'
 
+import './App.css'
+
 const Canvas = props => {
     // initializes ref
     const canvasRef = useRef(null)
     const linkRef = useRef(null)
+    const [height, setHeight] = useState(0)
+    const [width, setWidth] = useState(0)
 
     // intializes id with random string
     const [id,setId] = useState(crypto.randomBytes(5).toString('hex'))
@@ -58,9 +62,9 @@ const Canvas = props => {
                 ctx.lineTo(0, -len);
             } else {
                 if(angle > 0) {
-                    ctx.bezierCurveTo(15, -len/2, 10, -len/2, 0, -len);
+                    ctx.bezierCurveTo(initialThickness, -len/2, initialThickness, -len/2, 0, -len);
                 } else {
-                    ctx.bezierCurveTo(-15, -len/2, -10, -len/2, 0, -len);
+                    ctx.bezierCurveTo(-initialThickness, -len/2, -initialThickness, -len/2, 0, -len);
                 }
             } 
         } else {
@@ -107,7 +111,7 @@ const Canvas = props => {
         }
     
         // always shops generating if branch thickness is less than terminate-3
-        if(branchThickness < terminate-3) {
+        if(branchThickness < terminate*0.6) {
     
             // draws light pink circles on the ends
             ctx.restore();
@@ -151,9 +155,13 @@ const Canvas = props => {
         ctx.restore();
     }
 
+    function drawRock() {
+
+    }
+
     // drawers
     // draws red coral
-    function drawRed(x,y) {
+    function drawRed(x,y, height) {
         // makes it so that there are different color
         const color = {
             red: 247,
@@ -161,9 +169,10 @@ const Canvas = props => {
             blue: 138,
         }
 
+        const factor = Math.ceil(height/80)
         // varies the size of the corals
         const numOfBranches = 3
-        const thickness = getRandomInt(10) + 10
+        const thickness = getRandomInt(factor) + factor
         var angle = -70
 
         for (let i = 0; i < numOfBranches; i++) {
@@ -172,11 +181,13 @@ const Canvas = props => {
 
         }
 
+        console.log('AH')
+
         //inputs: startX, startY, len, angle, branchThickness color
     }
 
     // draws yellow coral
-    function drawYellow(x,y) {
+    function drawYellow(x,y, height) {
         // makes it so that there are different colors
         const color = {
             red: 246,
@@ -184,9 +195,10 @@ const Canvas = props => {
             blue: 100,
         }
 
+        const factor = Math.ceil(height/200)
         // varies the size of the corals
         const numOfBranches = 3
-        const thickness = getRandomInt(4) + 8
+        const thickness = getRandomInt(factor) + factor*2
         var angle = -100
 
         for (let i = 0; i < numOfBranches; i++) {
@@ -263,34 +275,40 @@ const Canvas = props => {
             const x = getRandomInt(width) + canvas.getBoundingClientRect().left
             const y = getRandomInt(height-sandHeight) + sandHeight
 
-            drawRed(x,y)
+            drawRed(x,y, height)
         }
         for (let i = 0; i<yellowToGenerate; i++) {
             const x = getRandomInt(width) + canvas.getBoundingClientRect().left
             const y = getRandomInt(height-sandHeight) + sandHeight
 
-            drawYellow(x,y)
+            drawYellow(x,y, height)
         }
+
+        setWidth(width)
+        setHeight(height)
     },[id])
 
     
 
     return (
         <div>
-            <canvas ref={canvasRef} id='responsive-canvas' className='coral-container'{...props}/>
-            <div className='buttons'>
-                <a href='' ref={linkRef} className="downloadButton" onClick={handleDownload}>download</a>
-                <button onClick={newPicture}>new picture</button>
+           <div className='seed'>
                 <input
                     value={seed}
                     type='text'
                     onChange={handleChange}
-                    placeholder="use a seed"
+                    placeholder="enter a seed..."
                     onKeyPress={handleEnter}
                     className='taskInput'
                 ></input>
+                <p> seed for this picture: {id}</p>
+           </div>
+            <canvas ref={canvasRef} id='responsive-canvas' className='coral-container'{...props}/>
+            <div className='buttons'>
+                <a href='' ref={linkRef} className="downloadButton" onClick={handleDownload}>download</a>
+                <button onClick={newPicture}>new picture</button>
+    
             </div>
-            <p>seed for this picture: {id}</p>
         </div>
     )
 }
