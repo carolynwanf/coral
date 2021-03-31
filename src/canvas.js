@@ -27,6 +27,8 @@ const Canvas = props => {
         const ang1 = getRandomInt(30) + 20
         const ang2 = getRandomInt(30) + 20
 
+        
+        //rounds the starts of base branches
         if (baseBranch) {
             ctx.beginPath()
             ctx.save();
@@ -41,7 +43,7 @@ const Canvas = props => {
             ctx.restore()
         }
     
-        // draw branch, draws curved branches at the base and straight ones at the top
+        // draw branch, draws curved branches at the base (for red corals) and straight ones at the top
         ctx.beginPath()
         ctx.save();
         ctx.translate(startX, startY);
@@ -74,6 +76,7 @@ const Canvas = props => {
         ctx.arc(0,0-(len*.95),radius,0,Math.PI,true);
         ctx.fill()
 
+        // sets up terminating condition
         const terminate = color.red === 247 ? initialThickness/2 : initialThickness * 0.78
     
         // stops generating if end === 3 and branch is less than terminate px thick
@@ -99,7 +102,7 @@ const Canvas = props => {
     
         }
     
-        // always shops generating if branch thickness is less than terminate-5
+        // always shops generating if branch thickness is less than terminate-3
         if(branchThickness < terminate-3) {
     
             // draws light pink circles on the ends
@@ -144,7 +147,7 @@ const Canvas = props => {
         ctx.restore();
     }
 
-    //draws red coral
+    // draws red coral
     function drawRed(x,y) {
         // makes it so that there are different color
         const color = {
@@ -153,6 +156,7 @@ const Canvas = props => {
             blue: 138,
         }
 
+        // varies the size of the corals
         const numOfBranches = 3
         const thickness = getRandomInt(10) + 10
         var angle = -70
@@ -175,6 +179,7 @@ const Canvas = props => {
             blue: 100,
         }
 
+        // varies the size of the corals
         const numOfBranches = 3
         const thickness = getRandomInt(4) + 8
         var angle = -100
@@ -188,17 +193,17 @@ const Canvas = props => {
     }
 
     let seed;
-
+    
+    // udpates seed as used types
     const handleChange = (e) => {
         seed = e.target.value;
     }
 
+    // initiates re-render when seed is updated
     const handleEnter = (e) => {
         if (e.key === 'Enter') {
             setId(seed)
         }
-
-        console.log('after enter',id)
     }
 
     
@@ -206,7 +211,7 @@ const Canvas = props => {
     // so that getContext isn't called until after component has mounted
     useEffect(() => {
 
-        // makes it responsive
+        // makes it responsive and improves image quality
         const canvas = canvasRef.current
         const context = canvas.getContext('2d')
 
@@ -248,6 +253,7 @@ const Canvas = props => {
         }
     },[id])
 
+    // lets user download image when download button is pressed
     function handleDownload() {
         const link = linkRef.current
         const canvas = canvasRef.current
@@ -256,6 +262,7 @@ const Canvas = props => {
         
     }
 
+    // generates a new picture
     function newPicture() {
         setId(crypto.randomBytes(5).toString('hex'))
     }
