@@ -57,3 +57,7 @@
 p {
   display:inline;
 }
+
+.downloadButton {
+  margin-bottom: 4em;
+}
